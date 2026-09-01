@@ -1,0 +1,7 @@
+proband_id,chrom_1,pos_1,ref_1,alt_1,chrom_2,pos_2,ref_2,alt_2,epcr,finding_type,notes
+PROBAND01,chr15,40209701,T,G,chr15,40220612,T,G,0.950624,primary,gene=BUB1B;pair_score=0.8458;phase=unknown;consequences=STG+MIS
+PROBAND01,chr11,46874935,C,T,chr11,46878979,T,C,0.827678,primary,gene=LRP4;pair_score=0.7069;phase=unknown;consequences=MIS+MIS
+PROBAND01,chr12,123845786,C,A,chr12,123929713,G,A,0.811,primary,gene=DNAH10;pair_score=0.6957;phase=unknown;consequences=MIS+MIS
+PROBAND01,chr19,39893494,A,C,chr19,39894237,C,T,0.730034,primary,gene=FCGBP;pair_score=0.6495;phase=trans_readbacked;consequences=MIS+MIS
+PROBAND01,chr16,2118216,C,T,chr16,2118412,C,T,0.721057,primary,gene=PKD1;pair_score=0.6450;phase=trans_readbacked;consequences=MIS+MIS
+PROBAND01,chr16,11679276,C,G,chr16,11691599,T,G,0.664048,primary,gene=TXNDC11;pair_score=0.6181;phase=unknown;consequences=MIS+MIS

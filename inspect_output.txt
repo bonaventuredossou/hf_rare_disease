@@ -1,0 +1,88 @@
+tools on PATH: samtools=NO, bcftools=NO, tabix=NO, bgzip=NO
+
+======================================================================
+INVENTORY  /network/scratch/b/bonaventure.dossou/rare_disease_data
+======================================================================
+    300.6 MB  [vcf      ] WGS_EX2312012_HGWCNDSX7.vcf.gz
+      9.7 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L001_R1_001.fastq.gz
+     10.3 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L001_R2_001.fastq.gz
+      9.7 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L002_R1_001.fastq.gz
+     10.2 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L002_R2_001.fastq.gz
+      9.5 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L003_R1_001.fastq.gz
+      9.9 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L003_R2_001.fastq.gz
+      9.6 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L004_R1_001.fastq.gz
+     10.0 GB  [fastq    ] WGS_EX2312012_HGWCNDSX7_S16_L004_R2_001.fastq.gz
+      2.2 MB  [index    ] WGS_EX2312012_HGWCNDSX7.vcf.gz.tbi
+     16.5 KB  [other    ] Challenge_Clinical_Phenotype_1.docx
+  ------------------------------------------------------------
+     79.1 GB  total across 11 files
+
+======================================================================
+VCF FILES
+======================================================================
+
+--- WGS_EX2312012_HGWCNDSX7.vcf.gz ---
+  fileformat : VCFv4.2
+  reference  : file://refGenome/GCA_000001405.15_GRCh38_no_alt_analysis_set_plus_hs38d1_maskedGRC_exclusions_v2_no_chr.fasta
+  build      : GRCh38/hg38
+  contig style: no chr prefix  <-- submission wants 'chr15' style
+  caller     : <ID=VariantFiltration,CommandLine="VariantFiltration --output WGS_EX23; VariantFiltration
+  samples    : 1  ['WGS_EX2312012']
+    SINGLETON. No parents, so compound-het phasing must come from
+    read-backed phasing in the alignments, not inheritance.
+  FORMAT keys: ['AD', 'DP', 'GQ', 'GT', 'PGT', 'PID', 'PL']
+  INFO keys  : ['AC', 'AF', 'AN', 'BaseQRankSum', 'ClippingRankSum', 'DB', 'DP', 'ExcessHet', 'FS', 'InbreedingCoeff', 'MLEAC', 'MLEAF', 'MQ', 'MQRankSum', 'QD'] ...
+  annotation : NONE, raw calls. You must annotate.
+  variants   : 200,000 (first 200,000 scanned)
+  contigs    : 1 distinct, top: [('1', 200000)]
+  GT spread  : [('0/1', 119611), ('1/1', 77461), ('1/2', 2928)]
+  phased GTs : 0 of 200,000  <-- unphased
+
+======================================================================
+FASTQ
+======================================================================
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L001_R1_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:1:1101:11957:1000 1:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 33M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L001_R2_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:1:1101:11957:1000 2:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 35M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L002_R1_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:2:1101:19117:1000 1:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 33M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L002_R2_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:2:1101:19117:1000 2:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 35M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L003_R1_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:3:1101:10673:1000 1:N:0:GTGACGGAGA+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 33M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L003_R2_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:3:1101:10673:1000 2:N:0:GTGACGGAGA+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 34M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L004_R1_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:4:1101:1018:1000 1:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 33M (very rough from file size)
+
+--- WGS_EX2312012_HGWCNDSX7_S16_L004_R2_001.fastq.gz ---
+  first header: @A01973:164:HGWCNDSX7:4:1101:1018:1000 2:N:0:GTGACGGAGC+NGGACCGCCA
+  read length: [149, 149, 149, 149]
+  approx reads: 34M (very rough from file size)
+
+======================================================================
+DONE
+======================================================================
+Paste this output back and we can pick the pipeline.
