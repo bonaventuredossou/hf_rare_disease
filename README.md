@@ -401,6 +401,289 @@ The analysis was implemented as a reproducible Python pipeline covering:
 12. strict QC and ranking;
 13. Track 1 CSV generation.
 
+### Reproducing Submission 1
+
+The commands below reproduce the Submission 1 workflow on the Mila cluster. The raw challenge files are not included in this repository.
+
+#### 1. Define paths
+
+```bash
+REPO=/home/mila/b/bonaventure.dossou/hf_rare_disease
+DATA=/network/scratch/b/bonaventure.dossou/rare_disease_data
+SCRATCH=/network/scratch/b/bonaventure.dossou
+RUN="$DATA/mva_track1_run"
+
+cd "$REPO"
+```
+
+The pipeline discovers the supplied VCF, paired-end FASTQs, and clinical phenotype document under `DATA`.
+
+#### 2. Install Python dependencies
+
+The analysis used an existing pip environment rather than Conda or Mamba.
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+For an exact environment snapshot after installation:
+
+```bash
+mkdir -p "$REPO/results"
+python --version > "$REPO/results/python_version.txt"
+python -m pip freeze | sort > "$REPO/results/pip_freeze.txt"
+```
+
+#### 3. Put caches, temporary files, and OpenCRAVAT modules on scratch
+
+The OpenCRAVAT annotation modules used here require roughly 160 GB, so they should not be installed into a small home quota.
+
+```bash
+export PIP_CACHE_DIR="$SCRATCH/cache/pip"
+export XDG_CACHE_HOME="$SCRATCH/cache"
+export TMPDIR="$SCRATCH/tmp"
+export SSL_CERT_FILE="$(python -m certifi)"
+
+mkdir -p \
+  "$PIP_CACHE_DIR" \
+  "$XDG_CACHE_HOME" \
+  "$TMPDIR" \
+  "$SCRATCH/opencravat/modules"
+```
+
+Configure OpenCRAVAT to store modules on scratch:
+
+```bash
+oc config md "$SCRATCH/opencravat/modules"
+```
+
+Install the base modules and annotation resources:
+
+```bash
+oc module install-base
+
+oc module install \
+  clinvar \
+  gnomad \
+  gnomad3 \
+  revel \
+  spliceai \
+  cadd
+```
+
+The installed resources used in this analysis were:
+
+| Module | Installed release observed during analysis | Approximate size |
+|---|---|---:|
+| ClinVar | 2026.07.01 | 1.7 GB |
+| gnomAD | v2.1 | 17.4 GB |
+| gnomAD3 | v3 | 44.0 GB |
+| REVEL | v4.3a resource | 7.0 GB |
+| SpliceAI | v4.0 resource | 1.8 GB |
+| CADD | v1.6 | 86.6 GB |
+
+For archival reproducibility, record the local OpenCRAVAT module listing after installation:
+
+```bash
+oc module ls > "$REPO/results/opencravat_modules.txt"
+```
+
+#### 4. Inspect all supplied files
+
+```bash
+python mva_track1_pipeline.py inspect \
+  --data-dir "$DATA" \
+  --verbose
+```
+
+This creates the dataset inventory and checks the supplied VCF, FASTQ lanes, phenotype document, and other locally discovered challenge files.
+
+#### 5. Extract phenotype and compute HPO gene scores
+
+```bash
+python mva_track1_pipeline.py phenotype \
+  --data-dir "$DATA" \
+  --verbose
+```
+
+The first run downloads the required HPO resources to:
+
+```text
+$DATA/resources/hpo/
+```
+
+The resulting genome-wide phenotype scores are written under:
+
+```text
+$RUN/phenotype/
+```
+
+#### 6. Reconstruct and validate the matching GRCh38 reference
+
+```bash
+python mva_track1_pipeline.py prepare-reference \
+  --data-dir "$DATA" \
+  --verbose
+```
+
+The stage reconstructs the GRCh38 no-alt plus hs38d1 reference representation named in the supplied VCF header, indexes it, and validates contig names and lengths against the VCF.
+
+The successful validation used in this analysis checked all 2,580 contigs with zero missing contigs and zero length mismatches.
+
+#### 7. Align all FASTQ reads
+
+The final memory-safe alignment configuration used six CPU threads and process-isolated pybwa shards:
+
+```bash
+python mva_track1_pipeline.py align \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --align-batch-pairs 2000 \
+  --align-shard-pairs 2000000 \
+  --bwa-chunk-bases 10000000 \
+  --verbose
+```
+
+All reads and all four lanes are aligned. `--align-shard-pairs` limits worker lifetime and memory accumulation; it does not downsample the data.
+
+Use `--force` only when intentionally rebuilding an existing alignment:
+
+```bash
+python mva_track1_pipeline.py align \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --align-batch-pairs 2000 \
+  --align-shard-pairs 2000000 \
+  --bwa-chunk-bases 10000000 \
+  --force \
+  --verbose
+```
+
+The main BAM QC report is:
+
+```text
+$RUN/alignment/flagstat.txt
+```
+
+#### 8. Normalize the supplied VCF
+
+```bash
+python mva_track1_pipeline.py normalize \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --verbose
+```
+
+This left-normalizes variants and splits multiallelic records against the validated reference.
+
+#### 9. Perform read-backed phasing
+
+```bash
+python mva_track1_pipeline.py phase \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --verbose
+```
+
+The analysis phased 2,754,502 of 3,180,797 heterozygous variants, corresponding to 86.60%.
+
+#### 10. Run functional and population annotation
+
+```bash
+python mva_track1_pipeline.py annotate \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --oc-annotators clinvar gnomad gnomad3 revel spliceai cadd \
+  --verbose
+```
+
+All annotation is performed locally against the installed OpenCRAVAT modules.
+
+#### 11. Rank variants and construct compound-heterozygous pairs
+
+```bash
+python mva_track1_pipeline.py rank \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --verbose
+```
+
+Important outputs include:
+
+```text
+$RUN/ranking/variant_candidates.tsv
+$RUN/ranking/compound_het_pairs.tsv
+$RUN/ranking/compound_het_pairs_nonprimary_audit.tsv
+$RUN/ranking/scoring_audit_v12.json
+$RUN/ranking/annotation_join_audit.json
+```
+
+The strict Submission 1 ranking contains the six retained primary candidates headed by the BUB1B pair.
+
+#### 12. Generate the exact Submission 1 schema
+
+`PROBAND01` must be supplied explicitly because the internal sequencing sample name is `WGS_EX2312012`.
+
+```bash
+python mva_track1_pipeline.py submit \
+  --data-dir "$DATA" \
+  --proband-id PROBAND01 \
+  --top-n 6 \
+  --submission-name bonaventuredossou_genomewide-hpo-comphet.csv \
+  --verbose
+```
+
+The generated prediction file is:
+
+```text
+$RUN/ranking/bonaventuredossou_genomewide-hpo-comphet.csv
+```
+
+To copy it into the public repository:
+
+```bash
+cp \
+  "$RUN/ranking/bonaventuredossou_genomewide-hpo-comphet.csv" \
+  "$REPO/bonaventuredossou_genomewide-hpo-comphet.csv"
+```
+
+#### 13. Optional single-command execution
+
+After dependencies and OpenCRAVAT resources are installed, the complete workflow can also be launched with:
+
+```bash
+python mva_track1_pipeline.py all \
+  --data-dir "$DATA" \
+  --threads 6 \
+  --align-batch-pairs 2000 \
+  --align-shard-pairs 2000000 \
+  --bwa-chunk-bases 10000000 \
+  --oc-annotators clinvar gnomad gnomad3 revel spliceai cadd \
+  --proband-id PROBAND01 \
+  --top-n 6 \
+  --submission-name bonaventuredossou_genomewide-hpo-comphet.csv \
+  --verbose
+```
+
+For debugging or cluster workflows, the stage-by-stage execution above is preferred because it preserves expensive completed stages and makes intermediate validation explicit.
+
+#### 14. Copy non-sensitive audit summaries to the repository
+
+```bash
+mkdir -p "$REPO/results"
+
+cp "$RUN/ranking/scoring_audit_v12.json" \
+   "$REPO/results/scoring_audit.json"
+
+cp "$RUN/ranking/annotation_join_audit.json" \
+   "$REPO/results/annotation_join_audit.json"
+
+cp "$RUN/alignment/flagstat.txt" \
+   "$REPO/results/alignment_flagstat.txt"
+```
+
+Do not copy the raw FASTQs, full VCF, BAM/BAI, phased VCF, clinical document, OpenCRAVAT database, or full patient-level candidate tables into the public repository.
+
 No patient-specific training data were available or assumed. External resources were used as annotation and prior biological evidence rather than as labels for supervised training on this patient.
 
 ### Repository contents expected for judging
@@ -421,11 +704,12 @@ The gated patient data should **not** be committed to the public repository. In 
 
 ### AI assistance disclosure
 
-**OpenAI ChatGPT** was used extensively during development to help implement and debug the analysis code, reason through intermediate results, inspect failure modes, refine the ranking pipeline, and draft portions of the technical report.
+**OpenAI ChatGPT** was used to help speed up the implementation and debugging of the analysis code, reason through intermediate results, inspect failure modes, refine the ranking pipeline, and draft portions of the technical report.
 
 The participant provided the research direction, ideas, hypotheses, scientific intuitions, and decisions about which analyses to pursue. ChatGPT assisted with translating those ideas into executable code and with interpreting the resulting outputs. Candidate calls and conclusions were not accepted solely because they were suggested by AI. They were checked against the supplied WGS data, annotation resources, read-level evidence, phenotype evidence, and reproducible pipeline outputs.
 
-ChatGPT was accessed through a **ChatGPT Plus** account. The exact account-level data-handling setting that was in effect during the project should be reported according to the participant's ChatGPT Data Controls setting. No value is asserted here because that setting cannot be verified from the analysis outputs.
+ChatGPT was accessed through a **ChatGPT Plus** account. The raw genomic challenge data, including the FASTQ, VCF, BAM, and other large analysis artifacts, remained on the participant's Mila compute cluster and were not directly accessed by ChatGPT. All computational analyses were executed by the participant on Mila. ChatGPT was used to help develop and debug the analysis code and to interpret intermediate results and summary outputs shared by the participant.
+
 
 ### Reproducibility boundary
 
