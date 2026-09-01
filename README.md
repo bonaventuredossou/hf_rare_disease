@@ -23,6 +23,7 @@ The central scientific result is therefore not only that the correct BUB1B pair 
 - BUB1B ranked first before disease-specific reranking.
 - The leading pair remained first after more conservative predictor scoring, primary-contig restriction, stricter germline QC, and removal of a read-backed cis pair.
 - Both BUB1B alleles were independently audited at the raw-read level.
+- Both alleles were subsequently verified against gnomAD v4.1.1 and the live ClinVar database, which resolved the second allele from "apparently population-absent" to a confirmed singleton in 1,614,226 alleles and identified a same-residue ClinVar submission the pipeline annotations did not surface.
 
 ## Analysis Timeline and Separation of Discovery From Post-Submission Validation
 
@@ -56,8 +57,8 @@ Our highest-ranked causal hypothesis is a **compound-heterozygous pair in BUB1B*
 
 | Variant | Consequence | Population evidence | Clinical / computational evidence |
 |---|---|---|---|
-| **chr15:40209701 T>G** | BUB1B p.Leu737Ter | Very rare | ClinVar Pathogenic/Likely pathogenic; CADD PHRED 38 |
-| **chr15:40220612 T>G** | BUB1B p.Asn1002Lys | Not observed in the gnomAD annotations used | CADD PHRED 26.4; REVEL 0.472 |
+| **chr15:40209701 T>G** | BUB1B p.Leu737Ter | gnomAD v4.1.1: AF 7.4e-5, no homozygotes, PASS in both callsets | ClinVar Pathogenic/Likely pathogenic, 2 stars (VCV000533901); CADD PHRED 38; LOFTEE high-confidence pLoF |
+| **chr15:40220612 T>G** | BUB1B p.Asn1002Lys | gnomAD v4.1.1: 1 allele in 1,614,226, AF 6.2e-7, no homozygotes | CADD PHRED 26.4; REVEL 0.472; PolyPhen 0.997 |
 
 The pair was ranked first with:
 
@@ -260,9 +261,13 @@ The final submission therefore contains six candidate pairs.
 - GQ: **99**
 - Allele balance: **0.543**
 - CADD PHRED: **38**
-- ClinVar: **Pathogenic/Likely pathogenic**
+- SpliceAI delta: **0.0300**; Pangolin: **-0.0300**
+- phyloP: **2.37**
+- LOFTEE: **high-confidence pLoF** on both annotated transcripts
+- ClinVar: **Pathogenic/Likely pathogenic**, review status criteria provided, multiple submitters, no conflicts (2 stars), last evaluated 9 October 2024
 - ClinVar disease annotation includes **Mosaic variegated aneuploidy syndrome 1**
-- Maximum population AF observed: approximately **7.7 × 10⁻⁵**
+- Identifiers: dbSNP **rs759242053**, ClinVar Variation ID **533901** (accession VCV000533901.9), ClinGen Allele Registry **CA7475986**, Canonical SPDI **NC_000015.10:40209700:T:G**
+- Maximum population AF returned by the installed gnomAD modules: approximately **7.7 × 10⁻⁵**, confirmed against gnomAD v4.1.1 below
 
 Raw pileup evidence:
 
@@ -274,6 +279,45 @@ Raw pileup evidence:
 - ALT median base quality: **37**
 
 This is a high-confidence pathogenic BUB1B loss-of-function allele.
+
+#### Population frequency verified against gnomAD v4.1.1
+
+The frequency reported by the pipeline was checked directly against gnomAD v4.1.1:
+
+| Callset | Filter | Allele count | Allele number | Allele frequency |
+|---|---|---:|---:|---:|
+| Exomes | PASS | 115 | 1,461,846 | 7.867e-5 |
+| Genomes | PASS | 5 | 152,174 | 3.286e-5 |
+| Total | | 120 | 1,614,020 | 7.435e-5 |
+
+The grpmax filtering allele frequency at 95% confidence is 8.341e-5. The highest frequency in any genetic ancestry group is 9.830e-5. No homozygotes are observed in 1,614,020 alleles.
+
+Both callsets carry a PASS filter and the variant page shows no quality warnings, so the frequency is usable as reported. The pipeline value of approximately 7.7e-5 is consistent with the v4.1.1 global figure.
+
+This frequency is appropriate for a recessive carrier allele. At a carrier allele frequency of 7.4e-5, the expected population frequency of a biallelic genotype is on the order of 5e-9, which is consistent with a condition affecting fewer than fifty people worldwide. The complete absence of homozygotes across more than 1.6 million alleles is itself supportive, since biallelic loss of BUB1B function is not expected to be tolerated in a population reference cohort.
+
+#### ClinVar submission detail
+
+The aggregate classification rests on two independent submissions, both of which contribute to it and neither of which conflicts with the other:
+
+| Submitter | Classification | Condition | Accession | Last evaluated |
+|---|---|---|---|---|
+| Labcorp Genetics (formerly Invitae) | Pathogenic | Mosaic variegated aneuploidy syndrome 1 | SCV000762865.8 | 9 October 2024 |
+| GeneDx | Likely pathogenic | not provided | SCV004031025.1 | 17 August 2023 |
+
+These correspond to RCV000641226.9 and RCV003324778.1 respectively. The variant first appeared in ClinVar on 28 May 2018, with the most recent submission on 25 February 2025.
+
+Both submitters cite the same two publications, Hanks et al. 2004 (PMID 15475955) and Rio Frio et al. 2010 (PMID 21190457), which establish the loss-of-function mechanism for BUB1B rather than reporting this specific allele. The classification is therefore mechanism-based, which is the appropriate basis for a nonsense variant in a gene with an established recessive loss-of-function mechanism.
+
+ClinGen annotates BUB1B as a gene associated with an autosomal recessive phenotype, and reports no evidence for haploinsufficiency. Both are consistent with the compound-heterozygous model used here, and with the absence of homozygotes in gnomAD despite a carrier frequency near 7.4e-5.
+
+#### Loss-of-function confidence and annotation agreement
+
+gnomAD applies LOFTEE to this variant and classifies it as a high-confidence predicted loss-of-function allele on both annotated transcripts, including the MANE Select transcript ENST00000287598.11. This is stronger than a bare stop-gain consequence call, because it indicates the premature stop is not rescued by the usual escape mechanisms such as last-exon position.
+
+The VEP annotation on the MANE Select transcript reproduces the pipeline call exactly (c.2210T>G, p.Leu737Ter, stop gained), and the recorded CADD PHRED of 38.0 matches the value reported above. The splice predictors are unremarkable, as expected for a nonsense change (SpliceAI 0.03, Pangolin -0.03).
+
+Regional genomic constraint over the surrounding 1 kb (15-40209000-40210000) is Z = 1.79 with an observed-to-expected ratio of 0.88. This is below the conventional constrained threshold, so regional constraint is mildly supportive at most and is not treated as independent evidence here.
 
 ### Variant 2
 
@@ -288,8 +332,12 @@ This is a high-confidence pathogenic BUB1B loss-of-function allele.
 - Allele balance: **0.464**
 - CADD PHRED: **26.4**
 - REVEL: **0.472**
-- No ClinVar classification was returned
+- PolyPhen (max): **0.997**
+- SpliceAI delta: **0.0200**; Pangolin: **0.0100**
+- phyloP: **3.69**
+- No ClinVar record for this nucleotide change, confirmed by direct positional query of the live database. A different nucleotide change producing the same amino acid substitution is classified Uncertain significance (see below)
 - No population frequency was returned by the installed gnomAD v2/v3 annotations
+- gnomAD v4.1.1, verified directly: **1 allele observed in 1,614,226**, global AF **6.195e-7**, **0 homozygotes**
 
 Raw pileup evidence:
 
@@ -302,7 +350,58 @@ Raw pileup evidence:
 
 The second allele therefore has strong sequencing support.
 
-Two claims about this allele must be kept separate. The pipeline observed that the installed gnomAD v2 and gnomAD v3 modules returned no frequency record for chr15:40220612 T>G. A missing annotation record is consistent with the allele being absent from those releases, but it is not the same statement as a confirmed absence, since it can also arise from allele representation differences or from resource coverage at that position. The reported evidence is therefore stated as "no frequency returned by the installed gnomAD v2/v3 modules" rather than as a verified population frequency of zero. Confirming absence would require a direct lookup against the current gnomAD release, which is recommended as a follow-up step before this allele is described as population-absent in any clinical context.
+#### Population frequency verified against gnomAD v4.1.1
+
+The pipeline annotated against gnomAD v2.1 and gnomAD v3, both of which returned no frequency record for this allele. Because gnomAD v4 adds a much larger exome callset, that result was checked directly against gnomAD v4.1.1 rather than reported as population absence.
+
+The allele is present in v4.1.1, as a single exome observation:
+
+| Callset | Filter | Allele count | Allele number | Allele frequency |
+|---|---|---:|---:|---:|
+| Exomes | PASS | 1 | 1,461,878 | 6.841e-7 |
+| Genomes | no variant | 0 | 152,348 | 0 |
+| Total | | 1 | 1,614,226 | 6.195e-7 |
+
+No homozygotes are observed. The highest frequency in any genetic ancestry group is 8.474e-7. The single carrier is male (XY). The grpmax filtering allele frequency is not computable at 95% confidence, as expected for a singleton.
+
+Three points follow.
+
+First, the earlier v2/v3 result is now explained rather than merely unconfirmed. The genome callset genuinely does not contain this allele (allele count 0 across 152,348 alleles), and the single observation comes from the v4 exome set, which did not exist in the releases the pipeline used. The absence was real for those releases and was not an annotation join failure.
+
+Second, the site is well covered, so the observation is informative rather than a coverage artifact. An allele number of 1,614,226 means the position was callable across essentially the whole cohort.
+
+Third, this does not weaken the recessive hypothesis. A global frequency of 6.2e-7 with no homozygotes is roughly four orders of magnitude below the 0.005 threshold used in the strict candidate tier, and is fully compatible with a second allele in an ultra-rare recessive condition. Confirming the allele as a real, high-quality singleton is stronger evidence than an unverified absence, because it rules out the possibility that the missing v2/v3 record reflected a representation or coverage problem.
+
+The wording used throughout this report has been corrected accordingly. This allele is described as observed once in gnomAD v4.1.1, not as population-absent.
+
+#### Absence of a ClinVar record
+
+The live ClinVar database was queried directly for every record at this base, using the positional query `BUB1B[gene] AND 40220612[chrpos38]`, with `15-40209701-T-G(GRCh38)` run first as a positive control. The control returned Variation ID 533901 as expected, confirming the query form.
+
+The positional query returned two records, neither of which is the c.3006T>G change reported here:
+
+| Variant | Protein change | Consequence | Germline classification | Review status |
+|---|---|---|---|---|
+| NM_001211.6:c.3006T>C | p.Asn1002= | synonymous | Likely benign | single submitter, 1 star |
+| NM_001211.6:c.3006T>A | p.Asn1002Lys | missense | Uncertain significance | single submitter, 1 star |
+
+Two conclusions follow, and they point in different directions.
+
+**The specific allele is unclassified.** No ClinVar record exists for chr15:40220612 T>G. This is a direct verified absence rather than an inference from an annotation module returning a blank field, and it is consistent with the installed module (release 2026.07.01) returning no classification and with gnomAD v4.1.1 listing no ClinVar cross-reference for this allele.
+
+**The amino acid substitution is not unclassified.** Asparagine at codon 1002 is encoded by AAT, so both c.3006T>A and c.3006T>G produce p.Asn1002Lys. The identical protein change has therefore been observed by a clinical laboratory, submitted to ClinVar under the generic condition "Inborn genetic diseases", and classified as a variant of uncertain significance.
+
+This must be recorded honestly rather than set aside. Under ACMG criteria, PS1 applies when the same amino acid change has a previously established pathogenic classification. It does not apply here, because the same-residue submission is a VUS. No submitter has classified p.Asn1002Lys as pathogenic.
+
+The weight of that observation is limited. It is a single-submitter, one-star assertion filed against a non-specific condition label, so the submitting laboratory would have had no MVA phenotype against which to evaluate the change, and a VUS explicitly denotes insufficient evidence rather than evidence of benignity. It is not evidence against causality. But it does mean the second allele cannot be presented as a wholly uncharacterised change, and it is the weakest link in the evidence chain supporting this pair.
+
+The synonymous c.3006T>C record is not informative for this allele, since it produces no protein change.
+
+#### Independent confirmation of the annotation
+
+The gnomAD v4.1.1 record independently reproduces the pipeline's transcript and predictor values. VEP on the MANE Select transcript ENST00000287598.11 gives BUB1B c.3006T>G, p.Asn1002Lys, missense, matching the pipeline call exactly, and the recorded CADD PHRED of 26.4 and REVEL of 0.472 match the values reported above.
+
+One counter-signal should be recorded. The genomic constraint of the surrounding 1 kb region (15-40220000-40221000) is Z = -0.8 with an observed-to-expected ratio of 1.06, which places the immediate region in the not-constrained range. Local regional constraint therefore does not add support for this allele, even though the residue itself is conserved (phyloP 3.69) and PolyPhen scores it as probably damaging.
 
 The pathogenicity of p.Asn1002Lys is less established than that of p.Leu737Ter. It should be regarded as a strong candidate missense allele rather than as independently proven pathogenic.
 
@@ -383,7 +482,7 @@ Interpretation:
 
 **BUB1B p.Leu737Ter / p.Asn1002Lys** is the leading candidate compound-heterozygous genotype explaining the proband's phenotype.
 
-The first allele is an established pathogenic BUB1B loss-of-function variant. The second is a high-quality missense variant for which the population resources used returned no frequency record, with computational evidence of deleteriousness.
+The first allele is an established pathogenic BUB1B loss-of-function variant. The second is a high-quality missense variant observed once in 1,614,226 alleles in gnomAD v4.1.1, with no homozygotes and with computational evidence of deleteriousness.
 
 The primary remaining uncertainty is the absence of direct cis/trans phase resolution between the two BUB1B variants from the available short-read data.
 
@@ -735,12 +834,31 @@ The material shared for interpretation is therefore a subset of what appears in 
 
 ### Reproducibility boundary
 
-The supplied challenge data are gated. The repository should therefore provide code and instructions that reproduce the analysis after an authorized participant places the challenge files in the expected local directory, rather than redistributing the files themselves.
+The supplied challenge data are gated. The repository therefore provides code and instructions that reproduce the analysis once an authorized participant places the challenge files in the expected local directory. It does not redistribute the files themselves.
 
 
 **Repository:** [https://github.com/bonaventuredossou/hf_rare_disease](https://github.com/bonaventuredossou/hf_rare_disease)
 
-## 14. Limitations
+## 14. Open Question: the Status of BUB1B p.Asn1002Lys
+
+The causal hypothesis is limited by one allele, and the direct database checks described in Section 8 sharpen rather than resolve that limitation. Collecting the position in one place:
+
+- chr15:40220612 T>G is present in gnomAD v4.1.1 as a single PASS observation in 1,614,226 alleles (AF 6.195e-7), with no homozygotes, at a position callable across essentially the whole cohort.
+- No ClinVar record exists for this nucleotide change, confirmed by direct positional query against the live database.
+- The identical amino acid substitution, reached through c.3006T>A, is present in ClinVar as a single-submitter variant of uncertain significance filed under the generic condition label "Inborn genetic diseases".
+- Computational evidence is mixed. CADD 26.4, PolyPhen 0.997, and phyloP 3.69 favour deleteriousness; REVEL 0.472 is equivocal; regional constraint (o/e 1.06) is unremarkable; splice predictors are null.
+
+The substantive point is that this is a variant on which the public resources have not reached a conclusion, and that the one laboratory to have assessed the amino acid change did so without a phenotype that would have made BUB1B relevant. This proband supplies exactly that missing context: a phenotype concordant with mosaic variegated aneuploidy, and a second allele that is an established pathogenic BUB1B stop-gain.
+
+Three things would resolve the question, in increasing order of effort:
+
+1. **Segregation.** Parental sequencing would establish whether the two alleles are in trans. This is the single highest-value missing datum and requires no new method.
+2. **Direct phasing.** The two variants are 10,911 bp apart, beyond the reach of the short-read fragments used here. Long-read sequencing or targeted long-range PCR across the interval would settle phase without parental samples.
+3. **Functional assessment.** An assay of BubR1 kinetochore function or a chromosome missegregation readout in patient-derived cells would provide the evidence class that computational prediction cannot supply, and is the evidence a ClinVar submitter would need to move this allele off uncertain significance.
+
+If the phase and segregation questions were answered, the case for a formal ACMG classification of p.Asn1002Lys would be materially stronger than it is today, and the observation would be worth returning to ClinVar so that the next laboratory to encounter this residue has the phenotype context that the existing submission lacks. Any such submission would involve patient-derived data and would require the agreement of the family and the Hackathon organizers under the data-sharing terms of this challenge; it is raised here as a scientific recommendation, not as an action taken.
+
+## 15. Limitations
 
 Several limitations remain:
 
@@ -748,16 +866,20 @@ Several limitations remain:
 - Short-read phasing could not establish whether the two BUB1B variants are in trans.
 - Computational prediction cannot independently establish pathogenicity of the p.Asn1002Lys missense allele.
 - Structural variants, complex repeat-associated events, and other variant classes may require specialized analyses beyond the supplied small-variant VCF.
-- The absence of a gnomAD record for p.Asn1002Lys was inferred from the installed annotation modules returning no frequency value, and has not been confirmed by a direct lookup against the current gnomAD release.
-- Population-database absence, once confirmed, is supportive but is not by itself proof of pathogenicity.
+- The pipeline annotated against gnomAD v2.1 and v3. The frequencies reported for both BUB1B alleles were subsequently verified by direct lookup against gnomAD v4.1.1, but the ranking itself was computed from the older releases, so the rarity term for p.Asn1002Lys treated the allele as unobserved rather than as a singleton. This does not change the ranking, since both values fall far below the filtering threshold used.
+- The specific nucleotide change c.3006T>G has no ClinVar record, confirmed by direct query. However, c.3006T>A, which produces the identical p.Asn1002Lys substitution, is classified in ClinVar as a variant of uncertain significance. ACMG criterion PS1 therefore does not apply to this allele, and no submitter has classified this amino acid change as pathogenic.
+- Regional genomic constraint around p.Asn1002Lys is unremarkable (o/e 1.06), so constraint does not independently support this allele.
+- Regional genomic constraint around p.Leu737Ter (o/e 0.88, Z = 1.79) falls below the conventional constrained threshold, so constraint is at most mildly supportive for this allele as well.
+- The ClinVar classification for p.Leu737Ter is a two-star aggregate rather than an expert-panel or practice-guideline assertion.
+- Extreme rarity in population databases is supportive but is not by itself proof of pathogenicity.
 - The ranking model is an evidence-prioritization system and is not intended to substitute for clinical molecular interpretation.
 
-## 15. References and External Resources
+## 16. References and External Resources
 
 ### Disease biology and clinical annotation
 
 1. Hanks S, Coleman K, Reid S, et al. Constitutional aneuploidy and cancer predisposition caused by biallelic mutations in BUB1B. *Nature Genetics*. 2004;36(11):1159-1161. doi:10.1038/ng1449.
-2. ClinVar. BUB1B c.2210T>G (p.Leu737Ter), Pathogenic/Likely pathogenic submissions for Mosaic Variegated Aneuploidy syndrome 1. Accessed during the challenge analysis.
+2. ClinVar. NM_001211.6(BUB1B):c.2210T>G (p.Leu737Ter), Variation ID 533901, conditions Mosaic variegated aneuploidy syndrome 1 and not provided. Germline classification Pathogenic/Likely pathogenic, review status criteria provided, multiple submitters, no conflicts (2 stars), last evaluated 9 October 2024. Verified against the ClinVar release of 6 June 2026 as surfaced on the gnomAD v4.1.1 variant page.
 3. Gargano MA, Matentzoglu N, Coleman B, et al. The Human Phenotype Ontology in 2024: phenotypes around the world. *Nucleic Acids Research*. 2024;52(D1):D1333-D1346. doi:10.1093/nar/gkad1005.
 
 ### Variant effect prediction and population frequency
@@ -766,6 +888,8 @@ Several limitations remain:
 5. Ioannidis NM, Rothstein JH, Pejaver V, et al. REVEL: An Ensemble Method for Predicting the Pathogenicity of Rare Missense Variants. *American Journal of Human Genetics*. 2016;99(4):877-885. doi:10.1016/j.ajhg.2016.08.016.
 6. Jaganathan K, Kyriazopoulou Panagiotopoulou S, McRae JF, et al. Predicting Splicing from Primary Sequence with Deep Learning. *Cell*. 2019;176(3):535-548.e24. doi:10.1016/j.cell.2018.12.015.
 7. Karczewski KJ, Francioli LC, Tiao G, et al. The mutational constraint spectrum quantified from variation in 141,456 humans. *Nature*. 2020;581:434-443. doi:10.1038/s41586-020-2308-7.
+
+13. gnomAD v4.1.1. Variant records 15-40209701-T-G and 15-40220612-T-G (GRCh38). Genome Aggregation Database, Broad Institute. Consulted directly to verify the population frequencies reported here.
 
 ### Analysis software
 
@@ -780,7 +904,7 @@ Several limitations remain:
 
 All citations above were checked against the published record for journal, year, volume, page range, and DOI.
 
-## 16. Conclusion
+## 17. Conclusion
 
 A genome-wide analysis of the complete WGS and phenotype data identified **BUB1B** as the strongest causal candidate.
 
@@ -791,7 +915,7 @@ The proposed genotype is:
 The hypothesis combines:
 
 - a known pathogenic BUB1B stop-gain allele;
-- a second coding allele with high-confidence read support and no frequency record in the population resources used;
+- a second coding allele with high-confidence read support, observed once in 1,614,226 alleles in gnomAD v4.1.1 with no homozygotes;
 - strong sequencing support;
 - deleteriousness evidence for the second allele;
 - strong phenotype-to-gene concordance;
