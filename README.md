@@ -58,7 +58,7 @@ Our highest-ranked causal hypothesis is a **compound-heterozygous pair in BUB1B*
 | Variant | Consequence | Population evidence | Clinical / computational evidence |
 |---|---|---|---|
 | **chr15:40209701 T>G** | BUB1B p.Leu737Ter | gnomAD v4.1.1: AF 7.4e-5, no homozygotes, PASS in both callsets | ClinVar Pathogenic/Likely pathogenic, 2 stars (VCV000533901); CADD PHRED 38; LOFTEE high-confidence pLoF |
-| **chr15:40220612 T>G** | BUB1B p.Asn1002Lys | gnomAD v4.1.1: 1 allele in 1,614,226, AF 6.2e-7, no homozygotes | CADD PHRED 26.4; REVEL 0.472; PolyPhen 0.997 |
+| **chr15:40220612 T>G** | BUB1B p.Asn1002Lys | gnomAD v4.1.1: 1 allele in 1,614,226, AF 6.2e-7, no homozygotes | CADD PHRED 26.4; REVEL 0.472; PolyPhen 0.997; no ClinVar record for this change, same-residue c.3006T>A is VUS (Section 8) |
 
 The pair was ranked first with:
 
@@ -374,7 +374,7 @@ Third, this does not weaken the recessive hypothesis. A global frequency of 6.2e
 
 The wording used throughout this report has been corrected accordingly. This allele is described as observed once in gnomAD v4.1.1, not as population-absent.
 
-#### Absence of a ClinVar record
+#### Direct ClinVar query: this allele absent, same-residue VUS present
 
 The live ClinVar database was queried directly for every record at this base, using the positional query `BUB1B[gene] AND 40220612[chrpos38]`, with `15-40209701-T-G(GRCh38)` run first as a positive control. The control returned Variation ID 533901 as expected, confirming the query form.
 
