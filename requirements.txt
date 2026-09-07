@@ -10,5 +10,4 @@ certifi
 # Lightweight analysis / audit helpers
 pandas
 numpy
-scipy
 tqdm

@@ -1,9 +1,0 @@
-{
-  "join_mode": "canonical_coordinate_allele",
-  "matched_heterozygous_alleles": 3180796,
-  "unmatched_heterozygous_alleles": 1,
-  "candidate_gene_annotations": 1250899,
-  "unmatched_by_variant_class": {
-    "deletion": 1
-  }
-}
