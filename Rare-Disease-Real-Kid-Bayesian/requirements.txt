@@ -1,0 +1,14 @@
+# Core pipeline dependencies
+pysam==0.24.0
+pybwa
+whatshap
+open-cravat
+python-docx
+openpyxl
+certifi
+
+# Lightweight analysis / audit helpers
+pandas
+numpy
+scipy
+tqdm
