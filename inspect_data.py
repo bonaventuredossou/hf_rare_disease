@@ -28,7 +28,7 @@ FASTQ_EXT = (".fastq", ".fq", ".fastq.gz", ".fq.gz")
 ALN_EXT = (".bam", ".cram", ".sam")
 TEXTY_EXT = (".txt", ".tsv", ".csv", ".json", ".ped", ".fam", ".md", ".yaml", ".yml", ".hpo")
 
-# Chromosome 1 has different lengths in GRCh38 and GRCh37, so its length identifies the build.
+# GRCh38 chr1 length; GRCh37 differs, which is how we fingerprint the build.
 CHR1_LEN = {248956422: "GRCh38/hg38", 249250621: "GRCh37/hg19"}
 
 
@@ -168,7 +168,7 @@ def inspect_vcf(path: Path, root: Path, max_records: int = 200_000) -> dict:
     print(f"  FORMAT keys: {fmt[:15]}{' ...' if len(fmt) > 15 else ''}")
     print(f"  INFO keys  : {inf[:15]}{' ...' if len(inf) > 15 else ''}")
     annotated = [k for k in ("CSQ", "ANN", "VEP", "gnomAD_AF", "AF_popmax", "CLNSIG") if k in inf]
-    print(f"  annotation : {annotated if annotated else 'NONE; annotation is required.'}")
+    print(f"  annotation : {annotated if annotated else 'NONE, raw calls. You must annotate.'}")
     info["annotated"] = annotated
 
     # Counts: prefer the index, else stream with a cap.
@@ -315,7 +315,7 @@ def main(root_str: str) -> None:
             inspect_fastq(p, root)
 
     hr("DONE")
-    print("Use this summary to select the appropriate pipeline configuration.")
+    print("Paste this output back and we can pick the pipeline.")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MVA Hackathon 2026 - Track 1 end-to-end singleton WGS pipeline (pip-native), v13.
+MVA Hackathon 2026 — Track 1 end-to-end singleton WGS pipeline (pip-native), v13.
 
 Research / competition use only. This script is not a clinical diagnostic pipeline.
 
@@ -2217,8 +2217,8 @@ def methods_report_stage(args, paths: dict) -> Path:
     rows_md = "\n".join(
         f"| {r['rank']} | {r['gene']} | {float(r['pair_score']):.4f} | {float(r['epcr']):.4f} | {r['phase']} | {r['chrom_1']}:{r['pos_1']} {r['ref_1']}>{r['alt_1']} | {r['chrom_2']}:{r['pos_2']} {r['ref_2']}>{r['alt_2']} |"
         for r in pairs
-    ) or "| - | - | - | - | - | - | - |"
-    report = f"""# MVA Hackathon 2026 - Track 1 Run Summary
+    ) or "| — | — | — | — | — | — | — |"
+    report = f"""# MVA Hackathon 2026 — Track 1 Methods Report (automated draft)
 
 ## Scope
 
@@ -2317,7 +2317,7 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="One-file, pip-native Track 1 singleton-WGS pipeline for the MVA Hackathon 2026.",
         epilog=textwrap.dedent("""
-        One-time packages in the existing Python environment:
+        One-time packages in your EXISTING Python environment:
           python -m pip install -U pysam pybwa whatshap open-cravat pandas numpy \
               python-docx openpyxl scipy scikit-learn tqdm
 
