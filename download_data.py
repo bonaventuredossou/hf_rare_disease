@@ -14,7 +14,7 @@ except ImportError:  # huggingface_hub < 0.19
 REPO_ID = "SageBio/mva-hackathon-2026-data"
 REPO_TYPE = "dataset"
 
-# Override with RARE_DISEASE_DATA_DIR if you move the data.
+# RARE_DISEASE_DATA_DIR overrides the default data location.
 DEFAULT_LOCAL_DIR = os.environ.get(
     "RARE_DISEASE_DATA_DIR",
     "/network/scratch/b/bonaventure.dossou/rare_disease_data",
@@ -172,8 +172,8 @@ def check_space(
 ) -> float:
     """Refuse to start an 85 GB pull that cannot finish.
 
-    Note this reads the filesystem, not your cluster quota. On a quota'd scratch
-    the filesystem can look empty while your own allocation is nearly full, so
+    This reads the filesystem rather than the account's cluster quota. A quota-limited
+    scratch filesystem can appear to have free space while the allocation is nearly full, so
     check the quota separately.
     """
     free = free_space_gb(local_dir)
@@ -192,7 +192,7 @@ def check_space(
 
 
 def list_files(repo_id: str = REPO_ID, repo_type: str = REPO_TYPE):
-    """List everything in the repo so you know what you are pulling."""
+    """List every remote repository file before download."""
     return sorted(list_repo_files(repo_id, repo_type=repo_type, token=get_token()))
 
 
